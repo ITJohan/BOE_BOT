@@ -67,7 +67,7 @@ void forward(int time) {
     delay(10);
   }
   
-  servoRight.writeMicroseconds(1300);
+  servoRight.writeMicroseconds(maxRight);
   servoLeft.writeMicroseconds(1610);
   delay(time);
   
