@@ -6,6 +6,14 @@ const int maxRight = 1300;
 const int maxLeft = 1700;
 const int minRight = 1700;
 const int minLeft = 1300;
+const int acceleration = 4;
+
+// define distances
+const int shortDist = 250;
+const int longDist = 1000;
+const int rightTurn = 570;
+const int leftTurn = 700;
+const int oneEighty = 320;
 
 // servo setup
 Servo servoRight;
@@ -16,31 +24,34 @@ const int rightServoPin = 10;
 const int leftServoPin = 11;
 const int piezo = 4;
 
-// setup fanfare
+// setup notes
 int note [] = {1046, 1318, 1568, 2093, 1568, 2093};
 int noteLength [] = {200, 200, 200, 400, 200, 1000};
 
 void setup() {
   
   // setup in/outs
-  pinMode(4, OUTPUT);
   pinMode(piezo, OUTPUT);
   servoRight.attach(rightServoPin);
   servoLeft.attach(leftServoPin);
   
+  // reset the servos
+  servoRight.writeMicroseconds(idle);
+  servoLeft.writeMicroseconds(idle);
+  
   // run Z track, input is distance in centimeters
-  forward(0);
-  /*turnRight(1000);
-  forward(1000);
-  turnLeft(1000);
-  forward(1000);
+  forward(shortDist);
+  turnRight(rightTurn);
+  forward(longDist);
+  turnLeft(leftTurn);
+  forward(shortDist);
   fanfare();
-  uTurn(1000);
-  forward(1000);
-  turnRight(1000);
-  forward(1000);
-  turnLeft(1000);
-  forward(1000);*/
+  uTurn(oneEighty);
+  forward(shortDist);
+  turnRight(rightTurn);
+  forward(longDist);
+  turnLeft(leftTurn);
+  forward(shortDist);
 }
 
 void loop() {  
@@ -50,16 +61,18 @@ void loop() {
 // runs forward
 void forward(int time) {
   // accelerate servos
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoRight.writeMicroseconds(idle - i);
     servoLeft.writeMicroseconds(idle + i);
     delay(10);
   }
   
+  servoRight.writeMicroseconds(1300);
+  servoLeft.writeMicroseconds(1610);
   delay(time);
   
   // decelerate servos
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoRight.writeMicroseconds(maxRight + i);
     servoLeft.writeMicroseconds(maxLeft - i);
     delay(10);
@@ -69,7 +82,7 @@ void forward(int time) {
 // turns right
 void turnRight(int time) {
   // accelerate servo
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoLeft.writeMicroseconds(idle + i);
     delay(10);
   }
@@ -77,7 +90,7 @@ void turnRight(int time) {
   delay(time);
   
   // decelerate servo
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoLeft.writeMicroseconds(maxLeft - i);
     delay(10);
   }
@@ -86,7 +99,7 @@ void turnRight(int time) {
 // turns left
 void turnLeft(int time) {
   // accelerate servo
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoRight.writeMicroseconds(idle - i);
     delay(10);
   }
@@ -94,7 +107,7 @@ void turnLeft(int time) {
   delay(time);
   
   // decelerate servo
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoRight.writeMicroseconds(maxRight + i);
     delay(10);
   }
@@ -103,7 +116,7 @@ void turnLeft(int time) {
 // makes a uturn
 void uTurn(int time) {
   // accelerate servos
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoRight.writeMicroseconds(idle - i);
     servoLeft.writeMicroseconds(idle - i);
     delay(10);
@@ -112,14 +125,13 @@ void uTurn(int time) {
   delay(time);
   
   // decelerate servos
-  for (int i = 0; i <= 200; i++) {
+  for (int i = 0; i <= 200; i += acceleration) {
     servoRight.writeMicroseconds(maxRight + i);
     servoLeft.writeMicroseconds(minLeft + i);
     delay(10);
   }
   
 }
-
 // plays fanfare
 void fanfare() {
   for (int i = 0; i < sizeof(note)/sizeof(int); i++) {
