@@ -132,6 +132,7 @@ void uTurn(int time) {
   }
   
 }
+
 // plays fanfare
 void fanfare() {
   for (int i = 0; i < sizeof(note)/sizeof(int); i++) {
