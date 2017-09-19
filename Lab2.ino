@@ -16,8 +16,14 @@ const int rightServoPin = 10;
 const int leftServoPin = 11;
 const int piezo = 4;
 
+//setup fanfare
+  int note [] = {1046, 1318, 1568, 2093, 1568, 2093};
+  int noteLength [] = {200, 200, 200, 400, 200, 1000};
+
 void setup() {
+  
   // setup in/outs
+  pinMode(4, OUTPUT);
   pinMode(piezo, OUTPUT);
   servoRight.attach(rightServoPin);
   servoLeft.attach(leftServoPin);
@@ -99,4 +105,11 @@ void uTurn(int time) {
     servoLeft.writeMicroseconds(minLeft + i);
     delay(10);
   }
+  
 }
+//song
+  void fanfare(){
+  for ( int i = 0; i < sizeof(note)/sizeof(int); i++){
+  tone(4, note[i], noteLength[i]);
+  delay(noteLength[i]);
+  }
