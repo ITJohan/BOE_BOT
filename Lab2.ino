@@ -16,9 +16,9 @@ const int rightServoPin = 10;
 const int leftServoPin = 11;
 const int piezo = 4;
 
-//setup fanfare
-  int note [] = {1046, 1318, 1568, 2093, 1568, 2093};
-  int noteLength [] = {200, 200, 200, 400, 200, 1000};
+// setup fanfare
+int note [] = {1046, 1318, 1568, 2093, 1568, 2093};
+int noteLength [] = {200, 200, 200, 400, 200, 1000};
 
 void setup() {
   
@@ -29,16 +29,25 @@ void setup() {
   servoLeft.attach(leftServoPin);
   
   // run Z track, input is distance in centimeters
+  forward(0);
+  /*turnRight(1000);
+  forward(1000);
+  turnLeft(1000);
+  forward(1000);
+  fanfare();
+  uTurn(1000);
   forward(1000);
   turnRight(1000);
+  forward(1000);
   turnLeft(1000);
-  uTurn(1000);
+  forward(1000);*/
 }
 
 void loop() {  
-
+  // nothing to loop
 }
 
+// runs forward
 void forward(int time) {
   // accelerate servos
   for (int i = 0; i <= 200; i++) {
@@ -57,6 +66,7 @@ void forward(int time) {
   }
 }
 
+// turns right
 void turnRight(int time) {
   // accelerate servo
   for (int i = 0; i <= 200; i++) {
@@ -73,6 +83,7 @@ void turnRight(int time) {
   }
 }
 
+// turns left
 void turnLeft(int time) {
   // accelerate servo
   for (int i = 0; i <= 200; i++) {
@@ -89,6 +100,7 @@ void turnLeft(int time) {
   }
 }
 
+// makes a uturn
 void uTurn(int time) {
   // accelerate servos
   for (int i = 0; i <= 200; i++) {
@@ -107,10 +119,11 @@ void uTurn(int time) {
   }
   
 }
-//song
-  void fanfare(){
-  for ( int i = 0; i < sizeof(note)/sizeof(int); i++){
-  tone(4, note[i], noteLength[i]);
-  delay(noteLength[i]);
+
+// plays fanfare
+void fanfare() {
+  for (int i = 0; i < sizeof(note)/sizeof(int); i++) {
+    tone(4, note[i], noteLength[i]);
+    delay(noteLength[i]);
   }
-  }
+}
