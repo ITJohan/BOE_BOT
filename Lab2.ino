@@ -39,7 +39,7 @@ void setup() {
   servoRight.writeMicroseconds(idle);
   servoLeft.writeMicroseconds(idle);
   
-  // run Z track, input is distance in centimeters
+  // run Z track
   forward(shortDist);
   turnRight(rightTurn);
   forward(longDist);
