@@ -1,10 +1,11 @@
 #import <Servo.h>
 
-
 // define speeds
 const int idle = 1500;
 const int maxRight = 1300;
 const int maxLeft = 1700;
+const int minRight = 1700;
+const int minLeft = 1300;
 
 // servo setup
 Servo servoRight;
@@ -25,6 +26,7 @@ void setup() {
   forward(1000);
   turnRight(1000);
   turnLeft(1000);
+  uTurn(1000);
 }
 
 void loop() {  
@@ -77,6 +79,24 @@ void turnLeft(int time) {
   // decelerate servo
   for (int i = 0; i <= 200; i++) {
     servoRight.writeMicroseconds(maxRight + i);
+    delay(10);
+  }
+}
+
+void uTurn(int time) {
+  // accelerate servos
+  for (int i = 0; i <= 200; i++) {
+    servoRight.writeMicroseconds(idle - i);
+    servoLeft.writeMicroseconds(idle - i);
+    delay(10);
+  }
+  
+  delay(time);
+  
+  // decelerate servos
+  for (int i = 0; i <= 200; i++) {
+    servoRight.writeMicroseconds(maxRight + i);
+    servoLeft.writeMicroseconds(minLeft + i);
     delay(10);
   }
 }
