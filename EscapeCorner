@@ -33,13 +33,13 @@ void loop()
   byte wRight = digitalRead(8);
   
   if(wLeft != wRight)
+  {
+    if ((wLeft != wLeftOld) && (wRight != wRightOld))
     {
-      if ((wLeft != wLeftOld) && (wRight != wRightOld))
-      {
-    counter++;
-    wLeftOld = wLeft;
-    wRightOld = wRight;
-    if(counter == 4)
+      counter++;
+      wLeftOld = wLeft;
+      wRightOld = wRight;
+      if(counter == 4)
       {
         wLeft = 0;
         wRight = 0;
