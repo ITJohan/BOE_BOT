@@ -57,21 +57,21 @@ void loop()
   {
     digitalWrite(9,HIGH);
     digitalWrite(2,HIGH);
-    backward(1000);
+    backward(1000, wLeft, wRight);
     turnLeft(800);
   }
   else if(wLeft == 0)
   {
     digitalWrite(9,HIGH);
     digitalWrite(2,LOW);
-    backward(1000);
+    backward(1000, wLeft, wRight);
     turnRight(400);
   }
   else if(wRight == 0)
   {
     digitalWrite(9,LOW);
     digitalWrite(2,HIGH);
-    backward(1000);
+    backward(1000, wLeft, wRight);
     turnLeft(400);
   }
   else
@@ -103,9 +103,29 @@ void turnRight(int time)
   delay(time);
 }
 
-void backward(int time)
+void backward(int time, int left, int right)
 {
   servoLeft.writeMicroseconds(1300);
   servoRight.writeMicroseconds(1700);
-  delay(time);
+
+  if (left == 0 && right == 0)
+  {
+    for (int i = 0; i < 3; i++)
+    {
+      tone(4, 3000, 250);
+      digitalWrite(9, HIGH);
+      digitalWrite(2, HIGH);
+    
+      delay(time/6);
+    
+      digitalWrite(9, LOW);
+      digitalWrite(2, LOW);
+    
+      delay(time/6);
+    }
+    else
+    {
+      delay(time);
+    }
+  }
 }
