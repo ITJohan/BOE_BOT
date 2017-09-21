@@ -1,5 +1,6 @@
 #include <Servo.h>
 
+// setup
 Servo servoLeft;
 Servo servoRight;
 
@@ -9,6 +10,7 @@ byte counter;
 
 void setup()
 {
+  // setup pins
   pinMode(8, INPUT);
   pinMode(6, INPUT);
   pinMode(9, OUTPUT);
@@ -20,6 +22,7 @@ void setup()
   servoLeft.attach(11);
   servoRight.attach(10);
   
+  // initialize variables
   wLeftOld = 0;
   wRightOld = 1;
   counter = 0;
@@ -27,11 +30,11 @@ void setup()
 
 void loop()
 {
-
-  // Corner Escape
+  // read newest whisker values
   byte wLeft = digitalRead(6);
   byte wRight = digitalRead(8);
   
+  // u-turn setup
   if(wLeft != wRight)
   {
     if ((wLeft != wLeftOld) && (wRight != wRightOld))
@@ -39,7 +42,7 @@ void loop()
       counter++;
       wLeftOld = wLeft;
       wRightOld = wRight;
-      if(counter == 4)
+      if(counter == 4) // do if 4 crashes
       {
         wLeft = 0;
         wRight = 0;
@@ -52,27 +55,27 @@ void loop()
     }
   }
   
-  // Whisker Navigation
-  if((wLeft == 0) && (wRight == 0))
+  // navigation controller
+  if((wLeft == 0) && (wRight == 0)) // turn backward and make u-turn
   {
     backward(1000, wLeft, wRight);
     turnLeft(800);
   }
-  else if(wLeft == 0)
+  else if(wLeft == 0) // turn backward and right
   {
     digitalWrite(9,HIGH);
     digitalWrite(2,LOW);
     backward(1000, wLeft, wRight);
     turnRight(400);
   }
-  else if(wRight == 0)
+  else if(wRight == 0) // turn backward and left
   {
     digitalWrite(9,LOW);
     digitalWrite(2,HIGH);
     backward(1000, wLeft, wRight);
     turnLeft(400);
   }
-  else
+  else // move forward
   {
     digitalWrite(9,LOW);
     digitalWrite(2,LOW);
@@ -80,33 +83,34 @@ void loop()
   }
 }
 
-void forward(int time)
+void forward(int time) // forward function
 {
   servoLeft.writeMicroseconds(1700);
   servoRight.writeMicroseconds(1300);
   delay(time);
 }
 
-void turnLeft(int time)
+void turnLeft(int time) // left function
 {
   servoLeft.writeMicroseconds(1300);
   servoRight.writeMicroseconds(1300);
   delay(time);
 }
 
-void turnRight(int time)
+void turnRight(int time) // right function
 {
   servoLeft.writeMicroseconds(1700);
   servoRight.writeMicroseconds(1700);
   delay(time);
 }
 
+// backward function
 void backward(int time, int left, int right)
 {
   servoLeft.writeMicroseconds(1300);
   servoRight.writeMicroseconds(1700);
 
-  if (left == 0 && right == 0)
+  if (left == 0 && right == 0) // make sound and blink 3 times if both whiskers are active
   {
     for (int i = 0; i < 3; i++)
     {
@@ -122,7 +126,7 @@ void backward(int time, int left, int right)
       delay(time/6);
     }
   }
-  else
+  else // standard case
   {
     delay(time);
   }
