@@ -9,11 +9,11 @@ const int minLeft = 1300;
 const int acceleration = 4;
 
 // define distances
-const int shortDist = 250;
-const int longDist = 1000;
-const int rightTurn = 570;
-const int leftTurn = 700;
-const int oneEighty = 320;
+const int shortDist = 200;
+const int longDist = 1500;
+const int rightTurn = 450;
+const int leftTurn = 580;
+const int oneEighty = 360;
 
 // servo setup
 Servo servoRight;
