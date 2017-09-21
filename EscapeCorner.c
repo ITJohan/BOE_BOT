@@ -55,8 +55,6 @@ void loop()
   // Whisker Navigation
   if((wLeft == 0) && (wRight == 0))
   {
-    digitalWrite(9,HIGH);
-    digitalWrite(2,HIGH);
     backward(1000, wLeft, wRight);
     turnLeft(800);
   }
@@ -123,9 +121,9 @@ void backward(int time, int left, int right)
     
       delay(time/6);
     }
-    else
-    {
-      delay(time);
-    }
+  }
+  else
+  {
+    delay(time);
   }
 }
