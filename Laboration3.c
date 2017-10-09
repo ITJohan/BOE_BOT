@@ -1,12 +1,11 @@
 #include <Servo.h>
 
-const int leftRec;
-
 Servo servoLeft;
 Servo servoRight;
+
 bool lightCheck = false;
 
-int irLeft, irRight;
+int irLeft, irRight, speed = 60;
 
 void setup()
 {
@@ -33,43 +32,38 @@ void loop()
   while (lightCheck != true)
   {
     // check IR receivers
-    irLeft = irDetect(9, 10, 34000);
-    irRight = irDetect(2, 3, 34000);
+    irLeft = irDetect(9, 10, 37000);
+    irRight = irDetect(2, 3, 37000);
     
     // make move according to detection
     if ((irLeft == 0) && (irRight == 0))
     {
-      maneuver(-200, -200, 20);
-      
-      digitalWrite(7, !irRight);
-      digitalWrite(8, !irLeft);
+      maneuver(-speed, -speed, 20);
+      digitalWrite(7, HIGH);
+      digitalWrite(8, HIGH);
     }
     else if (irLeft == 0)
     {
-      maneuver(200, -200, 20);
-      
-      digitalWrite(8, !irLeft);
+      maneuver(speed, -speed, 20);
+      digitalWrite(7, LOW);
+      digitalWrite(8, HIGH);
     }
     else if (irRight == 0)
     {
-      maneuver(-200, 200, 20);
-      
-      digitalWrite(7, !irRight);
+      maneuver(-speed, speed, 20);
+      digitalWrite(7, HIGH);
+      digitalWrite(8, LOW);
     }
     else
     {
-      maneuver(200, 200, 20);
-      digitalWrite(7, !irRight);
-      digitalWrite(8, !irLeft);
+      maneuver(speed, speed, 20);
+      digitalWrite(7, LOW);
+      digitalWrite(8, LOW);
     }
     
-    Serial.print(rcTime());
-    Serial.print("  ");
-    Serial.print(irLeft);
-    Serial.print("  ");
-    Serial.println(irRight);
+    Serial.println(rcTime(6));
     
-    if (rcTime() < 100)
+    if (rcTime(6) < 1000)
     {
       lightCheck = true;
       servoLeft.writeMicroseconds(1500);
@@ -101,15 +95,15 @@ void maneuver(int speedLeft, int speedRight, int msTime)
   delay(msTime);
 }
 
-long rcTime()
+long rcTime(int pin) // rcTime measures decay at pin
 {
-  pinMode(6, OUTPUT);
-  digitalWrite(6, HIGH);
-  delay(5);
-  pinMode(6, INPUT);
-  digitalWrite(6, LOW);
-  long time = micros();
-  while(digitalRead(6));
-  time = micros() - time;
-  return time;
+  pinMode(pin, OUTPUT); // Charge capacitor
+  digitalWrite(pin, HIGH); // ..by setting pin ouput-high
+  delay(5); // ..for 5 ms
+  pinMode(pin, INPUT); // Set pin to input
+  digitalWrite(pin, LOW); // ..with no pullup
+  long time = micros(); // Mark the time
+  while(digitalRead(pin)); // Wait for voltage < threshold
+  time = micros() - time; // Calculate decay time
+  return time; // Returns decay time
 }
