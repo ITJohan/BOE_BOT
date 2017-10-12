@@ -6,19 +6,19 @@ Servo servoRight;
 bool lightCheck = false;
 
 int irLeft, irRight, speed = 60;
+const int LEFT_REC = 10, LEFT_IR = 9, LEFT_LED = 7, RIGHT_REC = 3, RIGHT_IR = 2, RIGHT_LED = 8;
 
 void setup()
 {
-  Serial.begin(9600);
+  // pin setup
+  pinMode(LEFT_REC, INPUT); // left receiver
+  pinMode(LEFT_IR, OUTPUT); // left IR LED
   
-  pinMode(10, INPUT); // left receiver
-  pinMode(9, OUTPUT); // left IR LED
+  pinMode(RIGHT_REC, INPUT); // right receiver
+  pinMode(RIGHT_IR, OUTPUT); // right IR LED
   
-  pinMode(3, INPUT); // right receiver
-  pinMode(2, OUTPUT); // right IR LED
-  
-  pinMode(7, OUTPUT);
-  pinMode(8, OUTPUT);
+  pinMode(LEFT_LED, OUTPUT); // left LED
+  pinMode(RIGHT_LED, OUTPUT); // right LED
   
   tone(4, 3000, 1000);
   delay(1000);
@@ -29,40 +29,40 @@ void setup()
 
 void loop()
 {
+  // while photoresistor doesnt detect light
   while (lightCheck != true)
   {
     // check IR receivers
-    irLeft = irDetect(9, 10, 37000);
-    irRight = irDetect(2, 3, 37000);
+    irLeft = irDetect(LEFT_IR, LEFT_REC, 37000);
+    irRight = irDetect(RIGHT_IR, RIGHT_REC, 37000);
     
     // make move according to detection
-    if ((irLeft == 0) && (irRight == 0))
+    if ((irLeft == 0) && (irRight == 0)) // move backward
     {
       maneuver(-speed, -speed, 20);
-      digitalWrite(7, HIGH);
-      digitalWrite(8, HIGH);
+      digitalWrite(LEFT_LED, HIGH);
+      digitalWrite(RIGHT_LED, HIGH);
     }
-    else if (irLeft == 0)
+    else if (irLeft == 0) // turn right
     {
       maneuver(speed, -speed, 20);
-      digitalWrite(7, LOW);
-      digitalWrite(8, HIGH);
+      digitalWrite(LEFT_LED, LOW);
+      digitalWrite(RIGHT_LED, HIGH);
     }
-    else if (irRight == 0)
+    else if (irRight == 0) // turn left
     {
       maneuver(-speed, speed, 20);
-      digitalWrite(7, HIGH);
-      digitalWrite(8, LOW);
+      digitalWrite(LEFT_LED, HIGH);
+      digitalWrite(RIGHT_LED, LOW);
     }
-    else
+    else // move forward
     {
       maneuver(speed, speed, 20);
-      digitalWrite(7, LOW);
-      digitalWrite(8, LOW);
+      digitalWrite(LEFT_LED, LOW);
+      digitalWrite(RIGHT_LED, LOW);
     }
     
-    Serial.println(rcTime(6));
-    
+    // turn off if photoresistor detects light
     if (rcTime(6) < 1000)
     {
       lightCheck = true;
@@ -72,6 +72,7 @@ void loop()
   }
 }
 
+// returns 1 if IR, 0 if no IR
 int irDetect(int irLedPin, int irReceiverPin, long frequency)
 {
   tone(irLedPin, frequency, 8);
@@ -81,6 +82,7 @@ int irDetect(int irLedPin, int irReceiverPin, long frequency)
   return ir;
 }
 
+// control the wheels
 void maneuver(int speedLeft, int speedRight, int msTime)
 {
   servoLeft.writeMicroseconds(1500 + speedLeft);
@@ -95,15 +97,21 @@ void maneuver(int speedLeft, int speedRight, int msTime)
   delay(msTime);
 }
 
-long rcTime(int pin) // rcTime measures decay at pin
+// scan for light
+long rcTime(int pin)
 {
-  pinMode(pin, OUTPUT); // Charge capacitor
-  digitalWrite(pin, HIGH); // ..by setting pin ouput-high
-  delay(5); // ..for 5 ms
-  pinMode(pin, INPUT); // Set pin to input
-  digitalWrite(pin, LOW); // ..with no pullup
-  long time = micros(); // Mark the time
-  while(digitalRead(pin)); // Wait for voltage < threshold
-  time = micros() - time; // Calculate decay time
-  return time; // Returns decay time
+  // charge capacitor
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, HIGH);
+  delay(5);
+  
+  // uncharge capacitor
+  pinMode(pin, INPUT);
+  digitalWrite(pin, LOW);
+  
+  // take time until 0
+  long time = micros();
+  while(digitalRead(pin));
+  time = micros() - time;
+  return time;
 }
