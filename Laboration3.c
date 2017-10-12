@@ -5,7 +5,7 @@ Servo servoRight;
 
 bool lightCheck = false;
 
-int irLeft, irRight, speed = 60;
+int irLeft, irRight, velocity = 60;
 const int LEFT_REC = 10, LEFT_IR = 9, LEFT_LED = 7, RIGHT_REC = 3, RIGHT_IR = 2, RIGHT_LED = 8;
 
 void setup()
@@ -39,25 +39,25 @@ void loop()
     // make move according to detection
     if ((irLeft == 0) && (irRight == 0)) // move backward
     {
-      maneuver(-speed, -speed, 20);
+      maneuver(-velocity, -velocity, 20);
       digitalWrite(LEFT_LED, HIGH);
       digitalWrite(RIGHT_LED, HIGH);
     }
     else if (irLeft == 0) // turn right
     {
-      maneuver(speed, -speed, 20);
+      maneuver(velocity, -velocity, 20);
       digitalWrite(LEFT_LED, LOW);
       digitalWrite(RIGHT_LED, HIGH);
     }
     else if (irRight == 0) // turn left
     {
-      maneuver(-speed, speed, 20);
+      maneuver(-velocity, velocity, 20);
       digitalWrite(LEFT_LED, HIGH);
       digitalWrite(RIGHT_LED, LOW);
     }
     else // move forward
     {
-      maneuver(speed, speed, 20);
+      maneuver(velocity, velocity, 20);
       digitalWrite(LEFT_LED, LOW);
       digitalWrite(RIGHT_LED, LOW);
     }
